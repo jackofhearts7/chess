@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static passoff.chess.TestUtilities.validateMoves;
 
 public class BishopMoveTests {
-
     @Test
     public void bishopMoveUntilEdge() {
         validateMoves("""
