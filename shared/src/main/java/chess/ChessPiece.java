@@ -143,7 +143,18 @@ public class ChessPiece {
         return new ArrayList<>();
     }
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition position) {
-        return new ArrayList<>();
+        Collection<ChessMove> left = straightPath(board, position, 0, -1);
+        Collection<ChessMove> right = straightPath(board, position, 0,1);
+        Collection<ChessMove> ahead = straightPath(board, position, 1,0);
+        Collection<ChessMove> back = straightPath(board, position, -1,0);
+
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        validMoves.addAll(left);
+        validMoves.addAll(right);
+        validMoves.addAll(ahead);
+        validMoves.addAll(back);
+
+        return validMoves;
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
@@ -199,8 +210,27 @@ public class ChessPiece {
         return validMoves;
     }
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition position) {
+        Collection<ChessMove> left = straightPath(board, position, 0, -1);
+        Collection<ChessMove> right = straightPath(board, position, 0,1);
+        Collection<ChessMove> ahead = straightPath(board, position, 1,0);
+        Collection<ChessMove> back = straightPath(board, position, -1,0);
 
-        return new ArrayList<>();
+        Collection<ChessMove> aheadLeft = straightPath(board, position, 1,-1);
+        Collection<ChessMove> aheadRight = straightPath(board, position, 1,1);
+        Collection<ChessMove> backLeft = straightPath(board, position, -1,-1);
+        Collection<ChessMove> backRight = straightPath(board, position, -1,1);
+
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        validMoves.addAll(aheadLeft);
+        validMoves.addAll(aheadRight);
+        validMoves.addAll(backLeft);
+        validMoves.addAll(backRight);
+        validMoves.addAll(left);
+        validMoves.addAll(right);
+        validMoves.addAll(ahead);
+        validMoves.addAll(back);
+
+        return validMoves;
     }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition position) {
         //king can only move to 8 possible positions
