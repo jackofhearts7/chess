@@ -197,11 +197,11 @@ public class ChessPiece {
 
         ChessPosition aheadOne = new ChessPosition(position.getRow() + ahead, position.getColumn());
         if (aheadOne.isOnBoard() && board.getPiece(aheadOne) == null) {
-            ChessPiece.PieceType promotionType = null;
             if (aheadOne.getRow() == 8 || aheadOne.getRow() == 1) {
-                promotionType = ChessPiece.PieceType.QUEEN;
+                validMoves.addAll(getAllPromosForPos(position, aheadOne));
+            } else {
+                validMoves.add(new ChessMove(position, aheadOne, null));
             }
-            validMoves.add(new ChessMove(position, aheadOne, promotionType));
 
             if ((getTeamColor() == ChessGame.TeamColor.WHITE && position.getRow() == 2) ||
                 (getTeamColor() == ChessGame.TeamColor.BLACK && position.getRow() == 7)) {
@@ -215,11 +215,11 @@ public class ChessPiece {
         if (frontLeft.isOnBoard()) {
             ChessPiece destinationPiece = board.getPiece(frontLeft);
             if (destinationPiece != null && destinationPiece.getTeamColor() == opponentTeamColor) {
-                ChessPiece.PieceType promotionType = null;
                 if (frontLeft.getRow() == 8 || frontLeft.getRow() == 1) {
-                    promotionType = ChessPiece.PieceType.QUEEN;
+                    validMoves.addAll(getAllPromosForPos(position, frontLeft));
+                } else {
+                    validMoves.add(new ChessMove(position, frontLeft, null));
                 }
-                validMoves.add(new ChessMove(position, frontLeft, null));
             }
         }
 
@@ -227,15 +227,25 @@ public class ChessPiece {
         if (frontRight.isOnBoard()) {
             ChessPiece destinationPiece = board.getPiece(frontRight);
             if (destinationPiece != null && destinationPiece.getTeamColor() == opponentTeamColor) {
-                ChessPiece.PieceType promotionType = null;
                 if (frontRight.getRow() == 8 || frontRight.getRow() == 1) {
-                    promotionType = ChessPiece.PieceType.QUEEN;
+                    validMoves.addAll(getAllPromosForPos(position, frontRight));
+                } else {
+                    validMoves.add(new ChessMove(position, frontRight, null));
                 }
-                validMoves.add(new ChessMove(position, frontRight, promotionType));
             }
         }
 
         return validMoves;
+    }
+    private Collection<ChessMove> getAllPromosForPos(ChessPosition startPosition, ChessPosition endPosition) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+
+        moves.add(new ChessMove(startPosition, endPosition, PieceType.QUEEN));
+        moves.add(new ChessMove(startPosition, endPosition, PieceType.ROOK));
+        moves.add(new ChessMove(startPosition, endPosition, PieceType.KNIGHT));
+        moves.add(new ChessMove(startPosition, endPosition, PieceType.BISHOP));
+
+        return moves;
     }
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition position) {
         Collection<ChessMove> left = straightPath(board, position, 0, -1);
