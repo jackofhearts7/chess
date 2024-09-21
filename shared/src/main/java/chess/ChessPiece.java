@@ -105,9 +105,39 @@ public class ChessPiece {
         return moves;
     }
 
-    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition position) {
+        Collection<ChessMove> aheadLeft = straightPath(board, position, 1,-1);
+        Collection<ChessMove> aheadRight = straightPath(board, position, 1,1);
+        Collection<ChessMove> backLeft = straightPath(board, position, -1,-1);
+        Collection<ChessMove> backRight = straightPath(board, position, -1,1);
 
-        return new ArrayList<>();
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        validMoves.addAll(aheadLeft);
+        validMoves.addAll(aheadRight);
+        validMoves.addAll(backLeft);
+        validMoves.addAll(backRight);
+
+        return validMoves;
+    }
+    private Collection<ChessMove> straightPath(ChessBoard board, ChessPosition position, int rowChange, int colChange) {
+        ArrayList<ChessMove> validMoves = new ArrayList<>();
+        ChessPosition destination = position;
+        while(true) {
+            destination = new ChessPosition(destination.getRow() + rowChange, destination.getColumn() + colChange);
+            if (!destination.isOnBoard()) {
+                break;
+            }
+            ChessPiece piece = board.getPiece(destination);
+            if (piece == null) {
+                validMoves.add(new ChessMove(position, destination, null));
+            } else {
+                if (piece.getTeamColor() != getTeamColor()) {
+                    validMoves.add(new ChessMove(position, destination, null));
+                }
+                break;
+            }
+        }
+        return validMoves;
     }
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition position) {
         return new ArrayList<>();
