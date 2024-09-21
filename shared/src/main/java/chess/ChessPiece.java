@@ -116,9 +116,60 @@ public class ChessPiece {
         return new ArrayList<>();
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition position) {
-        return new ArrayList<>();
+        ArrayList<ChessMove> validMoves = new ArrayList<>();
+        //case1: move forward a square
+        //case2: if in og pos, move forward 2 sqs
+        //case3: if opp is frontLeft or frontRight, move up and over 1sq (left & right)
+        //og pos is different for team colors
+        int ahead = 1;
+        if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+            ahead = -1;
+        }
+
+        ChessPosition aheadOne = new ChessPosition(position.getRow() + ahead, position.getColumn());
+        if (aheadOne.isOnBoard() && board.getPiece(aheadOne) == null) {
+            ChessPiece.PieceType promotionType = null;
+            if (aheadOne.getRow() == 8 || aheadOne.getRow() == 1) {
+                promotionType = ChessPiece.PieceType.QUEEN;
+            }
+            validMoves.add(new ChessMove(position, aheadOne, promotionType));
+
+            if ((getTeamColor() == ChessGame.TeamColor.WHITE && position.getRow() == 2) ||
+                (getTeamColor() == ChessGame.TeamColor.BLACK && position.getRow() == 7)) {
+                ChessPosition aheadTwo = new ChessPosition(position.getRow() + ahead*2, position.getColumn());
+                if (aheadTwo.isOnBoard() && board.getPiece(aheadTwo) == null) {
+                    validMoves.add(new ChessMove(position, aheadTwo, null));
+                }
+            }
+        }
+        ChessPosition frontLeft = new ChessPosition(position.getRow() + ahead, position.getColumn() - 1);
+        if (frontLeft.isOnBoard()) {
+            ChessPiece destinationPiece = board.getPiece(frontLeft);
+            if (destinationPiece != null && destinationPiece.getTeamColor() == opponentTeamColor) {
+                ChessPiece.PieceType promotionType = null;
+                if (frontLeft.getRow() == 8 || frontLeft.getRow() == 1) {
+                    promotionType = ChessPiece.PieceType.QUEEN;
+                }
+                validMoves.add(new ChessMove(position, frontLeft, null));
+            }
+        }
+
+        ChessPosition frontRight = new ChessPosition(position.getRow() + ahead, position.getColumn() + 1);
+        if (frontRight.isOnBoard()) {
+            ChessPiece destinationPiece = board.getPiece(frontRight);
+            if (destinationPiece != null && destinationPiece.getTeamColor() == opponentTeamColor) {
+                ChessPiece.PieceType promotionType = null;
+                if (frontRight.getRow() == 8 || frontRight.getRow() == 1) {
+                    promotionType = ChessPiece.PieceType.QUEEN;
+                }
+                validMoves.add(new ChessMove(position, frontRight, promotionType));
+            }
+        }
+
+        return validMoves;
     }
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition position) {
+
         return new ArrayList<>();
     }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition position) {
