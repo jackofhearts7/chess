@@ -139,9 +139,37 @@ public class ChessPiece {
         }
         return validMoves;
     }
+
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition position) {
-        return new ArrayList<>();
+
+        ArrayList<ChessPosition> possibleDestinations = new ArrayList<>();
+
+        possibleDestinations.add(new ChessPosition(position.getRow() + 2, position.getColumn() + 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() + 2, position.getColumn() - 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 2, position.getColumn() + 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 2, position.getColumn() - 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() + 1, position.getColumn() + 2));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 1, position.getColumn() + 2));
+        possibleDestinations.add(new ChessPosition(position.getRow() + 1, position.getColumn() - 2));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 1, position.getColumn() - 2));
+
+        return extractValidDestinations(board, position, possibleDestinations);
     }
+
+    private Collection<ChessMove> extractValidDestinations(ChessBoard board, ChessPosition position, ArrayList<ChessPosition> possibleDestinations) {
+        ArrayList<ChessMove> validMoves = new ArrayList<>();
+
+        for (ChessPosition destination : possibleDestinations) {
+            if (destination.isOnBoard()) {
+                ChessPiece pieceAtDest = board.getPiece(destination);
+                if (pieceAtDest == null || pieceAtDest.getTeamColor() != getTeamColor()) {
+                    validMoves.add(new ChessMove(position, destination, null));
+                }
+            }
+        }
+        return validMoves;
+    }
+
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition position) {
         Collection<ChessMove> left = straightPath(board, position, 0, -1);
         Collection<ChessMove> right = straightPath(board, position, 0,1);
@@ -245,16 +273,6 @@ public class ChessPiece {
         possibleDestinations.add(new ChessPosition(position.getRow() - 1, position.getColumn() - 1));
         possibleDestinations.add(new ChessPosition(position.getRow(), position.getColumn() - 1));
 
-        ArrayList<ChessMove> validMoves = new ArrayList<>();
-
-        for (ChessPosition destination : possibleDestinations) {
-            if (destination.isOnBoard()) {
-                ChessPiece pieceAtDest = board.getPiece(destination);
-                if (pieceAtDest == null || pieceAtDest.getTeamColor() != getTeamColor()) {
-                    validMoves.add(new ChessMove(position, destination, null));
-                }
-            }
-        }
-        return validMoves;
+        return extractValidDestinations(board, position, possibleDestinations);
     }
 }
