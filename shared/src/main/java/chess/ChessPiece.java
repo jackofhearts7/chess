@@ -14,10 +14,16 @@ public class ChessPiece {
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
+            this.opponentTeamColor = ChessGame.TeamColor.WHITE;
+        } else {
+            this.opponentTeamColor = ChessGame.TeamColor.BLACK;
+        }
         this.type = type;
     }
 
     private final ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor opponentTeamColor;
     private final ChessPiece.PieceType type;
 
     @Override
@@ -50,6 +56,9 @@ public class ChessPiece {
      */
     public ChessGame.TeamColor getTeamColor() {
         return pieceColor;
+    }
+    public ChessGame.TeamColor getOpponentTeamColor() {
+        return opponentTeamColor;
     }
 
     /**
@@ -113,8 +122,28 @@ public class ChessPiece {
         return new ArrayList<>();
     }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition position) {
+        //king can only move to 8 possible positions
+        ArrayList<ChessPosition> possibleDestinations = new ArrayList<>();
 
-        return new ArrayList<>();
+        possibleDestinations.add(new ChessPosition(position.getRow() + 1, position.getColumn() - 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() + 1, position.getColumn()));
+        possibleDestinations.add(new ChessPosition(position.getRow() + 1, position.getColumn() + 1));
+        possibleDestinations.add(new ChessPosition(position.getRow(), position.getColumn() + 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 1, position.getColumn() + 1));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 1, position.getColumn()));
+        possibleDestinations.add(new ChessPosition(position.getRow() - 1, position.getColumn() - 1));
+        possibleDestinations.add(new ChessPosition(position.getRow(), position.getColumn() - 1));
+
+        ArrayList<ChessMove> validMoves = new ArrayList<>();
+
+        for (ChessPosition destination : possibleDestinations) {
+            if (destination.isOnBoard()) {
+                ChessPiece pieceAtDest = board.getPiece(destination);
+                if (pieceAtDest == null || pieceAtDest.getTeamColor() != getTeamColor()) {
+                    validMoves.add(new ChessMove(position, destination, null));
+                }
+            }
+        }
+        return validMoves;
     }
-
 }
